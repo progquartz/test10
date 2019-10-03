@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     // Start is called before the first frame update
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
     public float speed;
     public float jumpspeed;
     private bool isjumping;
@@ -13,21 +13,21 @@ public class Player : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        animator = gameObject.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetButtonDown("Jump"))
+        {
             isjumping = true;
-        if(rb.velocity == new Vector2(0, 0))
-        {
-            animator.SetTrigger("isidle");
-        }
-        else
-        {
-            animator.SetTrigger("isRun");
-        }
+        } 
+
+        //else
+        //{
+        //    animator.SetTrigger("IsJump");
+        //}
     }
     private void FixedUpdate()
     {
@@ -35,12 +35,20 @@ public class Player : MonoBehaviour
 
         moveVelocity = new Vector3(Input.GetAxisRaw("Horizontal"), 0, 0);
         transform.position += moveVelocity * speed * Time.deltaTime;
-
-        if(isjumping == true)
+        if (rb.velocity.x  != 0 && rb.position.y < -0.4)
+        {
+            animator.SetTrigger("IsRun");
+        }
+        else if (rb.position.y < -0.4)
+        {
+            
+            animator.SetTrigger("IsIdle");
+        }
+        if (isjumping == true)
         {
             rb.velocity = Vector2.zero;
             rb.AddForce(new Vector2(0,jumpspeed), ForceMode2D.Impulse);
-
+            animator.SetTrigger("IsJump");
             isjumping = false;
         }
     }
